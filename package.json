@@ -1,18 +1,24 @@
 {
-  "name": "fugr-ru",
+  "name": "react-table",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.12.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^7.2.1",
+    "bootstrap": "^4.4.1",
+    "classnames": "^2.2.6",
+    "fuse.js": "^3.4.6",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-scripts": "3.3.0"
+    "react-redux": "^7.1.3",
+    "react-scripts": "3.3.0",
+    "redux": "^4.0.5"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "REACT_APP_BUILD_DESCRIBE=$(git describe --always) react-scripts start",
+    "build": "REACT_APP_BUILD_DESCRIBE=$(git describe --always) react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
