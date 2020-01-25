@@ -2,6 +2,11 @@
   "name": "react-table",
   "version": "0.2.0",
   "private": true,
+  "homepage": ".",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/probablyateapot/react-table"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.0",
     "@testing-library/jest-dom": "^4.2.4",
