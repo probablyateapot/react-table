@@ -16,7 +16,8 @@ import ModalForm from './ModalForm';
 import {
     smDatasetUrl,
     lgDatasetUrl,
-    fuseOptions
+    fuseOptions,
+    requestTimeout
 } from '../config';
 
 const newEntitySchema = [
@@ -99,6 +100,18 @@ const EmptyPlace = ({ icon, text }) => (
     </div>
 );
 
+const ErrorWrapper = ({ error, dataLength, children }) => {
+    if (error) {
+        return (<EmptyPlace icon='fa fa-frown' text={error.message} />);
+    }
+
+    if (dataLength === 0) {
+        return (<EmptyPlace icon='fa fa-database' text='Выберите набор данных' />);
+    }
+
+    return children;
+};
+
 const Page = ({
     onShowModal,
     onCloseModal
@@ -108,6 +121,8 @@ const Page = ({
 	const [ sortField, setSortField ] = useState(null);
     const [ dataUrl, setDataUrl ] = useState(null);
     const [ loading, setLoadingState ] = useState(false);
+
+    const [ error, setError ] = useState(null);
 
     const cachedData = useSelector(s => s.data);
 	const dispatch = useDispatch();
@@ -181,17 +196,22 @@ const Page = ({
 
         setLoadingState(true);
 
-		fetch(dataUrl)
+        Promise.race([
+            fetch(dataUrl),
+            new Promise((_, reject) => setTimeout(reject, requestTimeout, new Error('Время запроса истекло')))
+        ])
             .then(res => res.json())
-			.then(data => {
-				dispatch({ type: SET_DATA, data });
+            .then(data => dispatch({ type: SET_DATA, data }))
+            .catch(error => {
+                setError(error);
+                setDataUrl(null);
+            })
+            .then(() => setLoadingState(false))
 
-                setLoadingState(false);
-            });
 	}, [ dataUrl, dispatch ]);
 
 	return (
-        <div className='container h-100'>
+        <div className='container'>
         { loading
             ? 
                 <div style={{ minHeight: '100vh' }}
@@ -202,19 +222,13 @@ const Page = ({
             :
             <div className='row pt-5'>
                 <div className='col-8'>
-                { cachedData.length > 0
-                    ?
-                    React.createElement(FuzzySearch, {
-                        data: cachedData.slice(0),
-                        opts: fuseOptions,
-                        toolbar: () => <FuzzyToolbar onShowModal={onShowModal} />,
-                    }, onFuzzySearch)
-                    :
-                    <EmptyPlace
-                        icon='fa fa-database'
-                        text='Выберите набор данных'
-                    />
-                }
+                    <ErrorWrapper error={error} dataLength={cachedData.length}>
+                        <FuzzySearch
+                            opts={fuseOptions}
+                            data={cachedData.slice(0)}
+                            toolbar={() => <FuzzyToolbar onShowModal={onShowModal} />}
+                        >{ onFuzzySearch }</FuzzySearch>
+                    </ErrorWrapper>
                 </div>
                 <div className='col'>
                     <DatasetTabs
