@@ -131,9 +131,11 @@ const Page = ({
         const _a = a[sortField];
         const _b = b[sortField];
 
-        return sortDirection
+        const res = sortDirection
             ? (typeof _a === 'number'? _b - _a : _b < _a)
             : (typeof _a === 'number'? _a - _b : _a < _b);
+
+        return res? 1 : -1;
         
     }, [ sortField, sortDirection ]);
 
