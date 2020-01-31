@@ -22,8 +22,9 @@
     "redux": "^4.0.5"
   },
   "scripts": {
-    "start": "REACT_APP_BUILD_DESCRIBE=$(git describe --always) react-scripts start",
-    "build": "REACT_APP_BUILD_DESCRIBE=$(git describe --always) react-scripts build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build:docker": "docker build --no-cache docker",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
